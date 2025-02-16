@@ -85,7 +85,7 @@ def initialize_airport():
     airport_search_input.click()
     time.sleep(1)
 
-    airport_search_input.send_keys("DAD") #다낭으로 초기화
+    airport_search_input.send_keys("DAD")  # 다낭으로 초기화
     airport_search_input.send_keys(Keys.ENTER)
     time.sleep(1)
 
@@ -97,7 +97,7 @@ def initialize_airport():
     airport_search_input.click()
     time.sleep(1)
 
-    airport_search_input.send_keys("GUM") #괌으로 초기화
+    airport_search_input.send_keys("GUM")  # 괌으로 초기화
     airport_search_input.send_keys(Keys.ENTER)
     time.sleep(1)
 
@@ -248,7 +248,8 @@ def check_all_the_possible_business_seats_in_a_loop(departure_airport, dest_airp
                 print(f'{departure_airport}발 {dest_airport}도착 편 {i}월의 주변 일자까지 만석이거나 운항편이 없으므로 해당 노선 크롤링 종료.')
                 break
 
-            prev_month_res, target_month_res, next_month_res = check_business_seat(target_month=i, start_search_date=crawlingOption.start_search_date)
+            prev_month_res, target_month_res, next_month_res = check_business_seat(target_month=i,
+                                                                                   start_search_date=crawlingOption.start_search_date)
 
             for prev_month_date_with_business in prev_month_res:
                 if i - 1 < start_search_month: break
@@ -476,8 +477,8 @@ def generate_kakao_message(crawling_result_in_dictionary, all_airport_mapping_di
             message += f"{idx}. {itinerary_in_korean}\n"
 
             each_dict_of_itinerary = crawling_result_in_dictionary.get(itinerary)
-            
-            if len(list(each_dict_of_itinerary.keys())) == 0: 
+
+            if len(list(each_dict_of_itinerary.keys())) == 0:
                 message += "기간 내 비즈니스석 없음.\n"
                 continue
 
@@ -530,7 +531,7 @@ if __name__ == '__main__':
 
         driver = webdriver.Chrome(service=ChromeService(), options=options)
         # 전체화면
-        # driver.maximize_window()
+        driver.maximize_window()
 
         login(driver=driver, id=id, pw=pw)
 
@@ -562,36 +563,47 @@ if __name__ == '__main__':
             end_search_month=end_search_month,
         )
 
-        start = time.time()
+        # 최대 5번의 재시도
+        max_retries = 5
+        retries = 0
 
         # infinite loop
         while True:
-            crawling_result_in_dictionary = crawling_in_the_loop_with_airport_list(crawlingOption=crawlingOption)
+            try:
+                start = time.time()
+                crawling_result_in_dictionary = crawling_in_the_loop_with_airport_list(crawlingOption=crawlingOption)
 
-            # 최종결과 - crawling_result_in_dictionary
-            print("최종 크롤링 결과 : ")
-            print(crawling_result_in_dictionary)
+                # 최종결과 - crawling_result_in_dictionary
+                print("최종 크롤링 결과 : ")
+                print(crawling_result_in_dictionary)
 
-            message_content = generate_kakao_message(crawling_result_in_dictionary=crawling_result_in_dictionary,
-                                                     all_airport_mapping_dict=all_airport_mapping_dict)
+                message_content = generate_kakao_message(crawling_result_in_dictionary=crawling_result_in_dictionary,
+                                                         all_airport_mapping_dict=all_airport_mapping_dict)
 
-            # 200자씩 나누어서 보내기
-            max_kakao_message_length = 200
-            for i in range(0, len(message_content), max_kakao_message_length):
-                chunk = message_content[i:i + max_kakao_message_length]
-                send_kakao_talk_message_to_myself(message_content=chunk, rest_api_key=rest_api_key,
-                                                  redirect_uri=redirect_uri)
+                # 200자씩 나누어서 보내기
+                max_kakao_message_length = 200
+                for i in range(0, len(message_content), max_kakao_message_length):
+                    chunk = message_content[i:i + max_kakao_message_length]
+                    send_kakao_talk_message_to_myself(message_content=chunk, rest_api_key=rest_api_key,
+                                                      redirect_uri=redirect_uri)
 
-            # 크롤링 사이클 종료
-            end = time.time()
+                # 크롤링 사이클 종료
+                end = time.time()
 
-            elapsed_time = end - start
+                elapsed_time = end - start
 
-            # timedelta로 변환하여 시, 분, 초, 밀리초로 출력
-            formatted_time = str(timedelta(seconds=elapsed_time))
+                # timedelta로 변환하여 시, 분, 초, 밀리초로 출력
+                formatted_time = str(timedelta(seconds=elapsed_time))
 
-            # '0:00:00.000'과 같은 형식으로 표시
-            print(f"-크롤링 종료. 수행시간 : {formatted_time}")
+                # '0:00:00.000'과 같은 형식으로 표시
+                print(f"-크롤링 종료. 수행시간 : {formatted_time}")
+            except Exception as e:
+                retries += 1
+                print(f"[Error] 크롤링 중 에러가 발생했습니다. 재시도 중... (시도 횟수: {retries}/{max_retries})")
+                print(f"에러 메시지: {e}")
+                if retries == max_retries:
+                    print("[Error] 최대 재시도 횟수에 도달했습니다. 프로그램을 종료합니다.")
+                    exit()
 
     except Exception as e:
         print("[Error] 크롤링 에러로 인해 프로그램을 종료함.")
