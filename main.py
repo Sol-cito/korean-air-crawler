@@ -1,4 +1,4 @@
-import time
+import time, os
 from datetime import datetime, timedelta
 
 from selenium import webdriver
@@ -178,6 +178,7 @@ def search_flight(driver, departure_airport, departure_month, dest_airport, craw
 
 
 def check_business_seat(target_month, start_search_date):
+    crawling_target_date_message = " - 크롤링 대상 date : "
     try:
         dates_on_calendar = driver.find_element(By.TAG_NAME, 'table') \
             .find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'td')
@@ -210,11 +211,11 @@ def check_business_seat(target_month, start_search_date):
 
             # test
             if is_date_prev_month:
-                print(f"크롤링 대상 date : {target_month - 1}월 {date}일")
+                crawling_target_date_message += f"{target_month - 1}월 {date}일/"
             elif not has_next_month_started:
-                print(f"크롤링 대상 date : {target_month}월 {date}일")
+                crawling_target_date_message += f"{target_month}월 {date}일/"
             else:
-                print(f"크롤링 대상 date : {target_month + 1}월 {date}일")
+                crawling_target_date_message += f"{target_month + 1}월 {date}일/"
 
             if "프레스티지석" in td_date_and_seats:
                 if is_date_prev_month:
@@ -224,6 +225,7 @@ def check_business_seat(target_month, start_search_date):
                 else:
                     next_month_res.append(date)
 
+        print(crawling_target_date_message);
         return prev_month_res, target_month_res, next_month_res
     except Exception as e:
         print(f"셀레니움 check_business_seat 에러 발생: {e}")
@@ -349,9 +351,6 @@ def crawling_in_the_loop_with_airport_list(crawlingOption):
                 crawlingOption=crawlingOption)
 
             crawling_result_in_dictionary[f"{european_airport}-ICN"] = business_res_dict
-
-            print("부분 크롤링 결과 dict: ")
-            print(crawling_result_in_dictionary)
 
             get_back_to_the_initial_month_in_calendar(driver=driver, initial_month=crawlingOption.start_search_month,
                                                       start_search_date=crawlingOption.start_search_date)
@@ -603,9 +602,11 @@ if __name__ == '__main__':
                 print(f"에러 메시지: {e}")
                 if retries == max_retries:
                     print("[Error] 최대 재시도 횟수에 도달했습니다. 프로그램을 종료합니다.")
+                    os.system('pause')
                     exit()
 
     except Exception as e:
         print("[Error] 크롤링 에러로 인해 프로그램을 종료함.")
         print(e)
+        os.system('pause')
         exit()
