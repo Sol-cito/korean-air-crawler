@@ -247,7 +247,7 @@ def check_all_the_possible_business_seats_in_a_loop(departure_airport, dest_airp
 
             no_nore_flight_searchable = driver.find_elements(By.XPATH, '//*[@id="panelBonusTrip"]/div/div/p/em')
             if len(no_nore_flight_searchable) > 0:
-                print(f'{departure_airport}발 {dest_airport}도착 편 {i}월의 주변 일자까지 만석이거나 운항편이 없으므로 해당 노선 크롤링 종료.')
+                print(f'\n{departure_airport}발 {dest_airport}도착 편 {i}월의 주변 일자까지 만석이거나 운항편이 없으므로 해당 노선 크롤링 종료.')
                 break
 
             prev_month_res, target_month_res, next_month_res = check_business_seat(target_month=i,
@@ -274,7 +274,7 @@ def check_all_the_possible_business_seats_in_a_loop(departure_airport, dest_airp
             time.sleep(1)
 
         print(
-            f'{departure_airport}출발 {dest_airport}도착 노선의 {crawlingOption.start_search_month}월 - {crawlingOption.end_search_month}월 비즈니스 좌석 크롤링 결과:')
+            f'\n{departure_airport}출발 {dest_airport}도착 노선의 {crawlingOption.start_search_month}월 - {crawlingOption.end_search_month}월 비즈니스 좌석 크롤링 결과:')
         print(business_res_dict)
         return business_res_dict
 
@@ -326,7 +326,7 @@ def crawling_in_the_loop_with_airport_list(crawlingOption):
         # 출발공항이 인천, 도착 공항이 유럽 모든 공항
         print("-크롤링 시작 - 출발공항이 인천, 도착 공항이 유럽 모든 공항...\n")
         for european_airport in all_airport_in_europe:
-            print(f" * 크롤링 노선 : 인천 --> {european_airport}\n")
+            print(f"\n * 크롤링 노선 : 인천 --> {european_airport}\n")
             business_res_dict = check_all_the_possible_business_seats_in_a_loop(
                 departure_airport="ICN",
                 dest_airport=european_airport,
