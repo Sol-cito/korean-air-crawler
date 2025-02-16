@@ -225,7 +225,7 @@ def check_business_seat(target_month, start_search_date):
                 else:
                     next_month_res.append(date)
 
-        print(crawling_target_date_message);
+        print(crawling_target_date_message + "\n")
         return prev_month_res, target_month_res, next_month_res
     except Exception as e:
         print(f"셀레니움 check_business_seat 에러 발생: {e}")
@@ -324,9 +324,9 @@ def crawling_in_the_loop_with_airport_list(crawlingOption):
 
     try:
         # 출발공항이 인천, 도착 공항이 유럽 모든 공항
-        print("-크롤링 시작 - 출발공항이 인천, 도착 공항이 유럽 모든 공항...")
+        print("-크롤링 시작 - 출발공항이 인천, 도착 공항이 유럽 모든 공항...\n")
         for european_airport in all_airport_in_europe:
-            print(f" 인천 --> {european_airport}")
+            print(f" * 크롤링 노선 : 인천 --> {european_airport}\n")
             business_res_dict = check_all_the_possible_business_seats_in_a_loop(
                 departure_airport="ICN",
                 dest_airport=european_airport,
@@ -334,15 +334,12 @@ def crawling_in_the_loop_with_airport_list(crawlingOption):
 
             crawling_result_in_dictionary[f"ICN-{european_airport}"] = business_res_dict
 
-            print("부분 크롤링 결과 dict: ")
-            print(crawling_result_in_dictionary)
-
             get_back_to_the_initial_month_in_calendar(driver=driver, initial_month=crawlingOption.start_search_month,
                                                       start_search_date=crawlingOption.start_search_date)
-        print("-인천발 크롤링 끝...")
+        print("-인천발 크롤링 끝...\n")
 
         # 출발공항이 유럽 모든 공항, 도착 공항이 인천
-        print("-크롤링 시작 - 출발공항이 유럽 모든 공항, 도착 공항이 인천...")
+        print("-크롤링 시작 - 출발공항이 유럽 모든 공항, 도착 공항이 인천...\n")
         for european_airport in all_airport_in_europe:
             print(f" {european_airport} --> 인천")
             check_all_the_possible_business_seats_in_a_loop(
@@ -354,7 +351,7 @@ def crawling_in_the_loop_with_airport_list(crawlingOption):
 
             get_back_to_the_initial_month_in_calendar(driver=driver, initial_month=crawlingOption.start_search_month,
                                                       start_search_date=crawlingOption.start_search_date)
-        print("-유럽발 크롤링 끝...")
+        print("-유럽발 크롤링 끝...\n")
 
         return crawling_result_in_dictionary
     except Exception as e:
@@ -453,12 +450,12 @@ def send_kakao_talk_message_to_myself(message_content, rest_api_key, redirect_ur
             data = {'template_object': json.dumps(data)}
             response = requests.post(url, headers=headers, data=data)
             if response.status_code == 200:
-                print(f"Kakao talk 메시지 전송 완료 - 메시지: ({message_content})")
+                print(f"Kakao talk 메시지 전송 완료 - 메시지: ({message_content})\n")
                 break
             elif response.status_code == 400:
                 get_new_access_token_by_refresh_token(rest_api_key=rest_api_key, redirect_uri=redirect_uri)
             else:
-                raise Exception(f"[Error] 카카오톡 메시지 API 에러 - {response.text}")
+                raise Exception(f"[Error] 카카오톡 메시지 API 에러 - {response.text}\n")
     except Exception as e:
         print(f"send_kakao_talk_message_to_myself 에러 발생: {e}")
         raise e
@@ -497,7 +494,7 @@ if __name__ == '__main__':
         rest_api_key = ""
         redirect_uri = ""
 
-        print("input.txt 파일을 읽습니다...")
+        print("input.txt 파일을 읽습니다...\n")
         f = open("./input.txt", 'r', encoding='utf-8')
         lines = f.readlines()
         for line in lines:
@@ -507,12 +504,14 @@ if __name__ == '__main__':
                 redirect_uri = line.replace("REDIRECT_URL=", "").replace("\n", "")
         f.close()
 
-        code = input(
-            f"다음 URL을 웹 브라우저에 입력 후, 리다이렉트 된 페이지 주소 URL의 code= 값을 입력해주세요 \n https://kauth.kakao.com/oauth/authorize?client_id={rest_api_key}&redirect_uri={redirect_uri}&response_type=code")
+        print(
+            f"다음 URL을 웹 브라우저에 입력 후, 리다이렉트 된 페이지 주소 URL의 code= 값을 입력해주세요 \n https://kauth.kakao.com/oauth/authorize?client_id={rest_api_key}&redirect_uri={redirect_uri}&response_type=code\n")
+
+        code = input('Code : ')
 
         print("Kakao talk 토큰 저장 중....")
         get_kakaotalk_tokens(rest_api_key=rest_api_key, redirect_uri=redirect_uri, code=code)
-        print("Kakao talk 토큰 발급 완료.")
+        print("Kakao talk 토큰 발급 완료.\n ")
 
         id = input('대한항공 ID : ')
         pw = input('비밀번호 : ')
@@ -522,7 +521,7 @@ if __name__ == '__main__':
         print(f"크롤링 시작 일자: {start_search_month}월 {start_search_date}일 (현재 날짜 +1 자동 입력)")
         end_search_month = int(input('크롤링 종료 month (두자리수로 입력해야 함. E.g. 2월은 02, 11월은 11.) : '))
 
-        print("셀레니움 start...")
+        print("셀레니움 start!!!!!!!!!!!!!!!\n")
 
         options = Options()
         # 브라우저 꺼짐 방지 옵션
@@ -575,6 +574,7 @@ if __name__ == '__main__':
                 # 최종결과 - crawling_result_in_dictionary
                 print("최종 크롤링 결과 : ")
                 print(crawling_result_in_dictionary)
+                print("\n")
 
                 message_content = generate_kakao_message(crawling_result_in_dictionary=crawling_result_in_dictionary,
                                                          all_airport_mapping_dict=all_airport_mapping_dict)
@@ -595,18 +595,18 @@ if __name__ == '__main__':
                 formatted_time = str(timedelta(seconds=elapsed_time))
 
                 # '0:00:00.000'과 같은 형식으로 표시
-                print(f"-크롤링 종료. 수행시간 : {formatted_time}")
+                print(f"-크롤링 종료. 수행시간 : {formatted_time}\n")
             except Exception as e:
                 retries += 1
-                print(f"[Error] 크롤링 중 에러가 발생했습니다. 재시도 중... (시도 횟수: {retries}/{max_retries})")
-                print(f"에러 메시지: {e}")
+                print(f"[Error] 크롤링 중 에러가 발생했습니다. 재시도 중... (시도 횟수: {retries}/{max_retries})\n")
+                print(f"에러 메시지: {e}\n ")
                 if retries == max_retries:
                     print("[Error] 최대 재시도 횟수에 도달했습니다. 프로그램을 종료합니다.")
                     os.system('pause')
                     exit()
 
     except Exception as e:
-        print("[Error] 크롤링 에러로 인해 프로그램을 종료함.")
+        print("[Error] 크롤링 에러로 인해 프로그램을 종료함.\n ")
         print(e)
         os.system('pause')
         exit()
