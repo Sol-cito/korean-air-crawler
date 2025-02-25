@@ -57,19 +57,26 @@ def login(driver, id, pw):
 
         login_btn = driver.find_element(By.CLASS_NAME, "login__submit-act")
         login_btn.click()
-        time.sleep(20)
+        time.sleep(30)
 
-        while True:
-            login_failed_message = driver.find_elements(By.XPATH,
-                                                        '//*[@id="shell-root"]/app-root/div/ke-login/ke-basic-layout/div[1]/ke-login-cont/ke-login-pres/div/form/div/div/div/div[1]/ke-error/div/p/em')
-            if len(login_failed_message) > 0:
-                raise Exception('[Error] 일치하는 회원정보가 없습니다. 아이디 또는 비밀번호를 확인해 주세요.')
+        login_failed_message = driver.find_elements(By.XPATH,
+                                                    '//*[@id="shell-root"]/app-root/div/ke-login/ke-basic-layout/div[1]/ke-login-cont/ke-login-pres/div/form/div/div/div/div[1]/ke-error/div/p/em')
+        if len(login_failed_message) > 0:
+            raise Exception('[Error] 일치하는 회원정보가 없습니다. 아이디 또는 비밀번호를 확인해 주세요.')
+
+        password_change_pass_cnt = 0
+
+        while password_change_pass_cnt <= 5:
+            password_change_pass_cnt += 1
+
             not_pw_change_btn = driver.find_elements(By.XPATH, '//*[@id="password-change"]/div/div/div/button[1]')
             if len(not_pw_change_btn) == 0:
+                time.sleep(1)
                 continue
-            not_pw_change_btn[0].click()
-            time.sleep(1)
-            break
+            else:
+                not_pw_change_btn[0].click()
+                time.sleep(1)
+                break
 
     except Exception as e:
         print(f"셀레니움 로그인 에러 발생: {e}")
