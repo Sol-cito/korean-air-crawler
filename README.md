@@ -27,4 +27,4 @@ REDIRECT_URL=https://example.com/oauth
 6. 유저가 직접 커맨드를 종료하기 전까지 크롤링이 무한정 계속되지만, 크롤링 중간에 예상치 못한 에러가 발생 시 최대 5번의 재시도를 하며, 5번이 넘는 에러가 나면 프로그램이 종료된다.
 
 
-- 실행파일 만드는 커맨드: pyinstaller main.py (dist 폴더에 exe 생성됨)
+- 실행파일 만드는 커맨드: pyinstaller --onefile main.py --name KoreanAirCrawler (dist 폴더에 exe 생성됨)
