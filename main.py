@@ -200,21 +200,25 @@ def check_business_seat(target_month, start_search_date):
 
         for td in dates_on_calendar:
             td_date_and_seats = str(td.text)
+
+            td_date_by_slicing = td_date_and_seats.split("\n")[0][-2:]
+
             if len(td_date_and_seats) < 2: continue
             if not first_date_found:
                 first_date_found = True
-                if int(td_date_and_seats[:2]) > start_search_date:
+                if int(td_date_by_slicing) > start_search_date:
                     is_date_prev_month = True
 
-            if f"{str(target_month)}/01" in td_date_and_seats:
+            if (f"{str(target_month)}/01" in td_date_and_seats) or (f"{str(target_month)}월 01" in td_date_and_seats):
                 is_date_prev_month = False
                 date = "01"
-            elif f"{str(target_month + 1)}/01" in td_date_and_seats:
+            elif (f"{str(target_month + 1)}/01" in td_date_and_seats) or (
+                    f"{str(target_month + 1)}월 01" in td_date_and_seats):
                 is_date_prev_month = False
                 has_next_month_started = True
                 date = "01"
             else:
-                date = td_date_and_seats[:2]
+                date = td_date_by_slicing
 
             # test
             if is_date_prev_month:
